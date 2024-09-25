@@ -1,23 +1,50 @@
 import React, { useState } from 'react'
 import './Access.css'
 import assert from '../../assets/assets'
+import { signup, login } from '../../config/firebase'
 
 
 const Access = () => {
-  const [access, setAccess] = useState("Sign Up");
+  const [access, setAccess] = useState("Login");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const onSubmitHandler = (event)=>{
+    event.preventDefault();
+    if(access === "Sign Up"){
+      // console.log(access);
+      signup(userName, email, password);
+    }
+    else{
+      login(email, password);
+    }
+  }
+
   return (
     <div className='access'>
         <img src={assert.logo_big} alt="" className='logo' />
-        <form className='access-form'>
+        <form
+         onSubmit={onSubmitHandler}
+         className='access-form'>
             <h2>{access}</h2>
             {
               (access === "Sign Up")?
-              <input type="text" placeholder='username' className='form-input' required/>
+              <input
+               onChange={(e)=> setUserName(e.target.value)}
+               value={userName}
+               type="text" placeholder='username' className='form-input' required/>
               : null
             }
             
-            <input type="email" placeholder='Email' className='form-input' required/>
-            <input type="text" placeholder='password' className='form-input' required/>
+            <input
+             onChange={(e)=> setEmail(e.target.value)}
+             value={email}
+             type="email" placeholder='Email' className='form-input' required/>
+            <input
+             onChange={(e)=> setPassword(e.target.value)}
+             value={password}
+             type="text" placeholder='password' className='form-input' required/>
             <button type='submit'>{(access === "Sign Up")?"Create Account":"Login"}</button>
             <div className="access-term">
                 <input type="checkbox" required/>
