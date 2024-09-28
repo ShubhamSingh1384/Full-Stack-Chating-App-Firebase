@@ -11,10 +11,11 @@ const LeftSidebar = () => {
   
   const navigate = useNavigate();
 
-  const {userData, chatData} = useContext(AppContext)
+  const {userData, chatData, chatUser, messagesId, setChatUser, setMessagesId} = useContext(AppContext)
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false)
-  console.log("chatData is : " ,chatData);
+  // console.log("chatData is : " ,chatData);
+
   const inputHandler = async (e) =>{
     try {
       const input = e.target.value;
@@ -83,7 +84,8 @@ const LeftSidebar = () => {
   }
 
   const setChat = async(item) =>{
-    console.log(item);
+    setMessagesId(item.messageId);
+    setChatUser(item)
   }
 
   return (
