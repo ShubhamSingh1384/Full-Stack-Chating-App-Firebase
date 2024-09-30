@@ -64,6 +64,19 @@ background-color: #0063ce; /* Darker green background on hover */
     cursor: pointer;
 }
 
+.access-toggle span{
+    color: #87CEEB;
+    cursor: pointer;
+}
+
+@media (max-width: 768px){
+    .login{
+        flex-direction: column;
+        justify-content: center;
+        gap:30px;
+    }
+}
+
 
 
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './Access.css'
 import assert from '../../assets/assets'
-import { signup, login } from '../../config/firebase'
+import { signup, login, resetPass } from '../../config/firebase'
 
 
 const Access = () => {
@@ -51,9 +51,12 @@ const Access = () => {
                 <p>Agree to the terms of use & privacy policy.</p>
             </div>
             <div className="access-forgot">
-                <p className='access-toggle'>{(access === "Sign Up")?"Already have an account" : "Create an Account"} <span className='click' onClick={()=>{setAccess((access === "Sign Up")?"Login":"Sign Up")}}>
-                  {(access === "Sign Up")?"Login ":"Click "} here</span></p>
-            </div>
+                <p className='access-toggle'>{(access === "Sign Up")
+                ?"Already have an account" : "Create an Account"} <span className='click' onClick={()=>{setAccess((access === "Sign Up")?"Login"
+                :"Sign Up")}}>
+                {(access === "Sign Up")?"Login ":"Click "} here</span></p>
+                {(access === "Login") ? <p className='access-toggle'>Forget Password ? <span onClick={() => resetPass(email)}>reset here</span></p>: null }
+              </div>
         </form>
     </div>
   )

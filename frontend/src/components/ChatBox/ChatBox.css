@@ -135,3 +135,10 @@
     font-weight: 500;
     color: #383838;
 }
+
+/* @media(max-width: 900px){
+    .chat-box{
+        width: 100px;
+        justify-content: center;
+    }
+} */

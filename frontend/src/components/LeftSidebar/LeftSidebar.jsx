@@ -3,7 +3,7 @@ import assets from '../../assets/assets'
 import './LeftSidebar.css'
 import { useNavigate } from 'react-router-dom'
 import { db, logout } from '../../config/firebase'
-import { arrayUnion, collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
+import { arrayUnion, collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { AppContext } from '../../context/AppContext'
 import { toast } from 'react-toastify'
 
@@ -11,7 +11,8 @@ const LeftSidebar = () => {
   
   const navigate = useNavigate();
 
-  const {userData, chatData, chatUser, messagesId, setChatUser, setMessagesId} = useContext(AppContext)
+  const {userData, chatData, chatUser,
+     messagesId, setChatUser, setMessagesId} = useContext(AppContext)
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false)
   // console.log("chatData is : " ,chatData);
@@ -77,6 +78,18 @@ const LeftSidebar = () => {
           messageSeen:true
         })
       })
+
+      const uSnap = await getDoc(doc(db, 'users', user.id));
+      const uData = uSnap.data();
+      setChat({
+        messagesId: newMessagesRef.id,
+        lastMessage:"",
+        rId: user.id,
+        updateAt: Date.now(),
+        messageSeen:true,
+        userData:uData
+      })
+
     } catch (error) {
       toast.error(error.message);
       console.log("error in LeftSidebar addChat : " , error)
@@ -84,12 +97,43 @@ const LeftSidebar = () => {
   }
 
   const setChat = async(item) =>{
-    setMessagesId(item.messageId);
-    setChatUser(item)
+    console.log("setChat is called");
+    try {
+      setMessagesId(item.messageId);
+      setChatUser(item)
+      const userChatsRef = doc(db, "chats" , userData.id);
+      // console.log("userChatRef ",userChatsRef)
+      const userChatsSnapshot = await getDoc(userChatsRef);
+      // console.log("userChatsSnapshot : ",userChatsSnapshot.data());
+      const userChatsData = userChatsSnapshot.data();
+      // console.log("userChatsData : ",userChatsData)
+      const chatIndex = userChatsData.chatsData.findIndex((c) =>c.messageId === item.messageId);
+      userChatsData.chatsData[chatIndex].messageSeen = true;
+      await updateDoc(userChatsRef, {
+        chatsData:userChatsData.chatsData
+      })
+    } catch (error) {
+      toast(error.message);
+      console.log(error);
+    }
+    
   }
 
+  useEffect(() =>{
+    const updateChatUserData = async () =>{
+      if(chatUser){
+        const userRef = doc(db, 'users', chatUser.userData.id);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        setChatUser(prev => ({...prev, userData:userData}))
+      }
+    }
+
+    updateChatUserData()
+  }, [chatData])
+
   return (
-    <div className='ls'>
+    <div className="ls">
       <div className="ls-top">
         <div className="ls-nav">
           <img src={assets.logo} className='logo' alt="" />
@@ -115,7 +159,7 @@ const LeftSidebar = () => {
         </div>
         :
         chatData?.map((item, index) =>(
-          <div onClick={() => setChat(item)} key={index} className='friends'>
+          <div onClick={() => setChat(item)} key={index} className={`friends ${item.messageSeen || item.messageId === messagesId ? "" : "border"}`}>
             <img src={item.userData.avatar} alt="" />
             <div>
               <p>{item.userData.name}</p>

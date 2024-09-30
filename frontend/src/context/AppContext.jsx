@@ -13,7 +13,8 @@ const AppContextProvider = ({children}) =>{
     const [chatData, setChatData] = useState(null);
     const [messagesId, setMessagesId] = useState(null);
     const [messages, setMessages] = useState([]);
-    const[chatUser, setChatUser] = useState(null);
+    const [chatUser, setChatUser] = useState(null);
+    
     
 
     const loadUserData = async(uid) =>{
@@ -24,7 +25,7 @@ const AppContextProvider = ({children}) =>{
             setUserData(userData);
             // console.log(userSnap.data());
             // console.log(userData);
-            console.log(userData.avatar, userData.name);
+            // console.log(userData.avatar, userData.name);
             if(userData.avatar && userData.name){
                 navigate('/chat')
             }
@@ -55,9 +56,9 @@ const AppContextProvider = ({children}) =>{
             const unSub = onSnapshot(chatRef, async(res) =>{
                 const chatItems = res.data().chatsData;
                 const tempData = [];
-                console.log("chatItems : ", res.data());
+                // console.log("chatItems : ", res.data());
                 for(const item of chatItems){
-                    console.log("item is " , item);
+                    // console.log("item is " , item);
                     const userRef = doc(db, 'users', item.rId)
                     const userSnap = await getDoc(userRef);
                     const userData = userSnap.data();
@@ -84,7 +85,7 @@ const AppContextProvider = ({children}) =>{
         chatUser,
         setChatUser,
         messages,
-        setMessages
+        setMessages,
 
     }
 
